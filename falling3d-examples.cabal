@@ -1,0 +1,15 @@
+Name:            falling3d-examples
+Version:         0.0.0.0
+Description:     3d physics engine demos
+License:         BSD3
+Author:          Sébastien Crozt
+Maintainer:      developer@crozet.re
+Build-Type:      Simple
+Cabal-Version:   >=1.2
+
+Executable falling3d-simple
+  Build-Depends:   base, vect, falling, falling3d, gloss, random, GLUT, vect-opengl
+  hs-source-dirs:  simple
+  Main-is:         Simple.hs
+  ghc-options:     -Wall -O2 -threaded
+  -- -prof -rtsopts -with-rtsopts=-p -auto-all -caf-all
