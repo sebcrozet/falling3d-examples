@@ -37,17 +37,16 @@ generateDynamicBody i = orderRigidBody i $ DynamicBody
                                          $ setExternalLinearForce (Vec3 0.0 (-9.81) 0.0)
                                          $ mkDynamicBody idmtx (Ball3d $ Ball 0.5) 1.0 zero zero
                         where
-                        g = mkStdGen (i * 20)
-                        (_, g')   = next g
-                        (dx, g'') = next g'
-                        (dy, g''')   = next g''
-                        (dz, _)   = next g'''
+                        g          = mkStdGen (i * 20)
+                        (_, g')    = next g
+                        (dx, g'')  = next g'
+                        (dy, g''') = next g''
+                        (dz, _)    = next g'''
                         (m, mx)    = genRange g
-                        range = int2Double mx - int2Double m
-                        fdx = int2Double dx / range * 3.0 - 1.5
-                        fdy = int2Double dy / range * 3.0 - 1.5
-                        fdz = int2Double dz / range * 3.0 - 1.5
+                        range      = int2Double mx - int2Double m
+                        fdx        = int2Double dx / range * 3.0 - 1.5
+                        fdy        = int2Double dy / range * 3.0 - 1.5
+                        fdz        = int2Double dz / range * 3.0 - 1.5
 
 main :: IO ()
-main = do
-       simulateDisplay world
+main = simulateDisplay world
