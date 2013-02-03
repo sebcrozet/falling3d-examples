@@ -3,6 +3,7 @@ import GHC.Float
 import Data.Vect.Double.Base hiding(translation)
 
 import Simulate
+import Data.Vect.Double.Util.Projective
 import Physics.Falling.World.GenericWorld
 import Physics.Falling.RigidBody.OrderedRigidBody
 import qualified Physics.Falling.RigidBody.Positionable as RB (translate)
@@ -14,28 +15,31 @@ import Physics.Falling.Shape.Ball
 import qualified Physics.Falling.Shape.Plane as P
 import Physics.Falling3d.World3d
 import Physics.Falling3d.Shape3d
+import Physics.Falling3d.Box
 import Physics.Falling3d.RigidBody3d
 
 world :: DefaultWorld3d Int
-world = addRigidBodies (bodies ++ ground) $ mkWorld3d
+world = addRigidBodies (spheres ++ boxes ++ ground) $ mkWorld3d
         where
-        bodies = map generateDynamicBody [1 .. 50]
-        ground = [
-                   orderRigidBody (-1) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                    $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 1)
-                   , orderRigidBody (-2) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                      $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 (-1))
-                   , orderRigidBody (-3) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                      $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 1 1 0)
-                   , orderRigidBody (-4) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                      $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 (-1) 1 0)
-                 ]
+        spheres = [] -- map (generateDynamicBody $ Ball3d $ Ball 0.5)       [1 .. 10]
+        boxes   = map (generateDynamicBody $ Box3d $ Box 0.5 0.5 0.5) [11 .. 15]
+        ground  = [
+                    orderRigidBody (-1) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                                                     $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 1)
+                    , orderRigidBody (-2) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 (-1))
+                    , orderRigidBody (-3) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 1 1 0)
+                    , orderRigidBody (-4) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 (-1) 1 0)
+                  ]
 
-generateDynamicBody :: Int -> OrderedRigidBody3d Int
-generateDynamicBody i = orderRigidBody i $ DynamicBody
-                                         $ RB.translate (Vec3 fdx (fdy + 2) fdz)
-                                         $ setExternalLinearForce (Vec3 0.0 (-9.81) 0.0)
-                                         $ mkDynamicBody idmtx (Ball3d $ Ball 0.5) 1.0 zero zero
+generateDynamicBody :: DynamicShape3d -> Int -> OrderedRigidBody3d Int
+generateDynamicBody shape i = orderRigidBody i $ DynamicBody
+                                               $ RB.translate (Vec3 fdx (fdy + 2) fdz)
+                                               $ setExternalLinearForce (Vec3 0.0 (-9.81) 0.0)
+                                               -- $ setExternalAngularForce (Vec3 0.0 (-9.81) 0.0)
+                                               $ mkDynamicBody idmtx shape 1.0 zero zero
                         where
                         g          = mkStdGen (i * 20)
                         (_, g')    = next g

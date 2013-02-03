@@ -13,6 +13,13 @@ import Physics.Falling.World.GenericWorld
 import Physics.Falling3d.World3d
 import WorldDraw
 
+
+frequency :: Double
+frequency = 60.0
+
+updatePerSeconds :: Int
+updatePerSeconds = round $ 1000.0 / frequency
+
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 0 0 0 0
@@ -30,7 +37,7 @@ display :: IORef (DefaultWorld3d Int) -> DisplayCallback
 display worldRef = do
    clear [ ColorBuffer, DepthBuffer ]
    loadIdentity
-   lookAt (Vertex3 0 5 10) (Vertex3 0 0 0) (Vector3 0 0.1 0)
+   lookAt (Vertex3 2 5 10) (Vertex3 0 0 0) (Vector3 0 0.1 0)
    readIORef worldRef >>= drawWorld
    swapBuffers
 
@@ -39,7 +46,7 @@ update :: IORef (DefaultWorld3d Int) -> IO ()
 update worldRef = do
                   modifyIORef worldRef (step 0.016)
                   postRedisplay Nothing
-                  addTimerCallback 16 $ (update worldRef)
+                  addTimerCallback updatePerSeconds $ (update worldRef)
 
 reshape :: ReshapeCallback
 reshape size = do
@@ -66,5 +73,5 @@ simulateDisplay initWorld = do
    displayCallback       $= (display worldRef)
    reshapeCallback       $= Just reshape
    keyboardMouseCallback $= Just keyboard
-   addTimerCallback 16 (update worldRef)
+   addTimerCallback updatePerSeconds (update worldRef)
    mainLoop
