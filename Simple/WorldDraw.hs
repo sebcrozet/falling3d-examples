@@ -5,7 +5,6 @@ drawWorld
 where
 import Graphics.UI.GLUT
 import qualified Data.Vect.Double.OpenGL as VO
-import Data.Vect.Double.Base
 
 import Physics.Falling.RigidBody.OrderedRigidBody
 import Physics.Falling.RigidBody.Positionable()
@@ -26,16 +25,16 @@ drawWorld world = mapM_ drawBody (rigidBodies world)
 drawBody :: OrderedRigidBody3d Int -> IO ()
 drawBody body
  = case rigidBody body of
-   DynamicBody db -> let l2w = getLocalToWorld db in
-                     preservingMatrix (VO.multMatrix l2w >> (drawDynamicShape $ getCollisionVolume db))
-   StaticBody sb -> let l2w = getLocalToWorld sb in
-                     preservingMatrix (VO.multMatrix l2w >> (drawStaticShape $ getCollisionVolume sb))
+   DynamicBody db -> let l2w = localToWorld db in
+                     preservingMatrix (VO.multMatrix l2w >> (drawDynamicShape $ collisionVolume db))
+   StaticBody sb -> let l2w = localToWorld sb in
+                     preservingMatrix (VO.multMatrix l2w >> (drawStaticShape $ collisionVolume sb))
 
 drawDynamicShape :: DynamicShape3d -> IO ()
-drawDynamicShape (Ball3d (Ball radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
-drawDynamicShape (Box3d  _)             = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
+drawDynamicShape (Ball3d (Ball _ radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
+drawDynamicShape (Box3d  _)               = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
 
 drawStaticShape :: StaticShape3d -> IO ()
-drawStaticShape (StaticBall3d (Ball radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
-drawStaticShape (StaticBox3d  _)             = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
-drawStaticShape (Plane3d      (P.Plane (Vec3 _ _ _))) = return ()
+drawStaticShape (StaticBall3d (Ball _ radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
+drawStaticShape (StaticBox3d  _)               = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
+drawStaticShape (Plane3d      (P.Plane _ _)) = return ()
