@@ -12,3 +12,9 @@ Executable falling3d-simple
   hs-source-dirs:  simple
   Main-is:         Simple.hs
   ghc-options:     -Wall -O2 -threaded
+
+Executable falling3d-plane-box
+  Build-Depends:   base, vect, falling, falling3d, gloss, random, GLUT, vect-opengl
+  hs-source-dirs:  simple
+  Main-is:         PlaneBox.hs
+  ghc-options:     -Wall -O2 -threaded
