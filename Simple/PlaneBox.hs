@@ -1,6 +1,8 @@
 import System.Random
 import Data.Vect.Double.Base hiding(translation)
 
+import Graphics.UI.GLUT
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Simulate
 
 -- needed to get 'addRigidBodies'
@@ -59,5 +61,9 @@ world = addRigidBodies [box, plane] -- add our box and our plane…
                 $ (Plane3d $ P.planev $ Vec3 0 1 0) -- … having the shape of an infinite plane poiting on
                                                     -- the Y axis direction.
 
+keyboard :: a -> KeyboardMouseCallback
+keyboard _ (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboard _ _            _    _ _ = return ()
+
 main :: IO ()
-main = simulateDisplay world
+main = simulateDisplay world keyboard

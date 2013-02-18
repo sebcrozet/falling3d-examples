@@ -2,8 +2,10 @@ import System.Random
 import GHC.Float
 import Data.Vect.Double.Base hiding(translation)
 
+import Graphics.UI.GLUT
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Simulate
-import Data.Vect.Double.Util.Projective
+
 import Physics.Falling.World.GenericWorld
 import Physics.Falling.RigidBody.OrderedRigidBody
 import qualified Physics.Falling.RigidBody.Positionable as RB (translate)
@@ -21,17 +23,17 @@ import Physics.Falling3d.RigidBody3d
 world :: DefaultWorld3d Int
 world = addRigidBodies (spheres ++ boxes ++ ground) $ mkWorld3d
         where
-        spheres = [] -- map (generateDynamicBody $ Ball3d $ Ball 0.5)       [1 .. 10]
-        boxes   = map (generateDynamicBody $ Box3d $ Box 0.5 0.5 0.5) [11 .. 15]
+        spheres = map (generateDynamicBody $ Ball3d $ ball 0.5) [0 .. 9]
+        boxes   = map (generateDynamicBody $ Box3d $ Box 0.5 0.5 0.5) [10 .. 40]
         ground  = [
                     orderRigidBody (-1) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                     $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 1)
-                    , orderRigidBody (-2) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 0 1 (-1))
-                    , orderRigidBody (-3) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 1 1 0)
-                    , orderRigidBody (-4) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
-                                                       $ mkStaticBody idmtx (Plane3d $ P.Plane $ Vec3 (-1) 1 0)
+                                                     $ mkStaticBody idmtx (Plane3d $ P.planev $ Vec3 0 1 0)
+                    -- , orderRigidBody (-2) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                    --                                    $ mkStaticBody idmtx (Plane3d $ P.planev $ Vec3 0 1 (-1))
+                    -- , orderRigidBody (-3) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                    --                                    $ mkStaticBody idmtx (Plane3d $ P.planev $ Vec3 1 1 0)
+                    -- , orderRigidBody (-4) $ StaticBody $ RB.translate (Vec3 0 (-1) 0)
+                    --                                    $ mkStaticBody idmtx (Plane3d $ P.planev $ Vec3 (-1) 1 0)
                   ]
 
 generateDynamicBody :: DynamicShape3d -> Int -> OrderedRigidBody3d Int
@@ -52,5 +54,9 @@ generateDynamicBody shape i = orderRigidBody i $ DynamicBody
                         fdy        = int2Double dy / range * 3.0 - 1.5
                         fdz        = int2Double dz / range * 3.0 - 1.5
 
+keyboard :: a -> KeyboardMouseCallback
+keyboard _ (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboard _ _            _    _ _ = return ()
+
 main :: IO ()
-main = simulateDisplay world
+main = simulateDisplay world keyboard

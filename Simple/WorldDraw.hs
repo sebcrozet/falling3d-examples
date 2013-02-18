@@ -33,8 +33,10 @@ drawBody body
 drawDynamicShape :: DynamicShape3d -> IO ()
 drawDynamicShape (Ball3d (Ball _ radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
 drawDynamicShape (Box3d  _)               = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
+drawDynamicShape _                        = undefined -- FIXME: not yet supported
 
 drawStaticShape :: StaticShape3d -> IO ()
 drawStaticShape (StaticBall3d (Ball _ radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
 drawStaticShape (StaticBox3d  _)               = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
 drawStaticShape (Plane3d      (P.Plane _ _))   = return ()
+drawStaticShape _                              = undefined -- FIXME: not yet supported

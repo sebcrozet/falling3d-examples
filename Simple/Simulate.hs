@@ -4,7 +4,6 @@ simulateDisplay
 )
 where
 
-import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
 import Data.IORef
@@ -57,13 +56,11 @@ reshape size = do
    matrixMode $= Modelview 0
    loadIdentity
 
-keyboard :: KeyboardMouseCallback
-keyboard (Char '\27') Down _ _ = exitWith ExitSuccess
-keyboard _            _    _ _ = return ()
-
-simulateDisplay :: DefaultWorld3d Int -> IO ()
-simulateDisplay initWorld = do
-   worldRef <- newIORef initWorld
+simulateDisplay :: DefaultWorld3d Int    ->
+                   (IORef (DefaultWorld3d Int) -> KeyboardMouseCallback) ->
+                   IO ()
+simulateDisplay initWorld keyCallback = do
+   worldRef          <- newIORef initWorld
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode    $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize     $= Size 500 500
@@ -72,6 +69,6 @@ simulateDisplay initWorld = do
    myInit
    displayCallback       $= (display worldRef)
    reshapeCallback       $= Just reshape
-   keyboardMouseCallback $= Just keyboard
+   keyboardMouseCallback $= Just (keyCallback worldRef)
    addTimerCallback updatePerSeconds (update worldRef)
    mainLoop
