@@ -37,4 +37,4 @@ drawDynamicShape (Box3d  _)               = renderObject Solid (Cube 1.0) -- FIX
 drawStaticShape :: StaticShape3d -> IO ()
 drawStaticShape (StaticBall3d (Ball _ radius)) = renderObject Solid (Sphere' (VO.glflt radius) 20 16)
 drawStaticShape (StaticBox3d  _)               = renderObject Solid (Cube 1.0) -- FIXME: convert the actual length into scale
-drawStaticShape (Plane3d      (P.Plane _ _)) = return ()
+drawStaticShape (Plane3d      (P.Plane _ _))   = return ()
